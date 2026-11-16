@@ -1,0 +1,80 @@
+name: "Frogbot Scan and Fix"
+on:
+  workflow_dispatch:
+  schedule:
+    # The repository will be scanned once a day at 00:00 GMT.
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+
+jobs:
+  create-fix-pull-requests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # The repository scanning will be triggered periodically on the following branches.
+        branch: [ "main" ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+
+      # Install prerequisites for Maven (pom.xml)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # Change to '11' or '21' if your pom.xml requires a different JDK
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - uses: jfrog/frogbot@v3
+        env:
+          # [Mandatory]
+          # JFrog platform URL
+          JF_URL: ${{ secrets.JF_URL }}
+
+          # [Mandatory if JF_USER and JF_PASSWORD are not provided]
+          # JFrog access token generated from your ci-git-scanner user (member of security-administrators)
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+
+          # [Mandatory]
+          # The GitHub token automatically generated for the job
+          JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # [Optional, default: "."]
+          # Relative path to the root of the Maven project if pom.xml is not at repo root
+          # JF_WORKING_DIR: "."
+
+          # [Mandatory for isolation]
+          # Routes all scan results strictly into your isolated secgit project
+          JF_PROJECT: "apoorvad-secgit"
+
+          # [Optional]
+          # Xray Watches configured inside the secgit project
+          # JF_WATCHES: "<your-secgit-watch-name>"
+
+          # [Optional, default: "TRUE"]
+          # Fails the Frogbot task if any security issue is found
+          # JF_FAIL: "FALSE"
+
+          # [Optional]
+          # Set to your Artifactory Virtual Maven repository name (e.g., "libs-release")
+          # ONLY needed if your pom.xml pulls private/internal JARs from Artifactory.
+          # Leave commented out if all dependencies come from Maven Central.
+          # JF_DEPS_REPO: "libs-release"
+
+          # [Optional, Default: "FALSE"]
+          # If TRUE, Frogbot creates a single pull request with all pom.xml version fixes
+          # JF_GIT_AGGREGATE_FIXES: "FALSE"
+
+          # [Optional, Default: "FALSE"]
+          # Handle vulnerabilities with fix versions only
+          # JF_FIXABLE_ONLY: "TRUE"
+
+          # [Optional]
+          # Set the minimum severity for vulnerabilities that should be fixed in pull requests
+          # Accepted values: Low, Medium, High, or Critical
+          # JF_MIN_SEVERITY: "High"
