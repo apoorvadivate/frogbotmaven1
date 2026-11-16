@@ -50,7 +50,7 @@ jobs:
 
           # [Mandatory for isolation]
           # Routes all scan results strictly into your isolated secgit project
-          # JF_PROJECT_KEY: "apoorvad-frogbot-maven1"
+          JF_PROJECT_KEY: "apoorvad-frogbot-maven1"
 
           # [Optional]
           # Xray Watches configured inside the secgit project
