@@ -13,7 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Using properties for versions makes Frogbot PR fixes clean and easy to review -->
-        <log4j.version>2.14.1</log4j.version>
+        <log4j.version>2.25.4</log4j.version>
     </properties>
 
     <dependencies>
