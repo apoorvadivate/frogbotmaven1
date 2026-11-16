@@ -30,7 +30,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - uses: jfrog/frogbot@v2
+      - uses: jfrog/frogbot@v3
         env:
           # [Mandatory]
           # JFrog platform URL
