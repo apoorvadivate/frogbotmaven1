@@ -30,7 +30,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - uses: jfrog/frogbot@v3
+      - uses: jfrog/frogbot@v2
         env:
           # [Mandatory]
           # JFrog platform URL
@@ -50,7 +50,7 @@ jobs:
 
           # [Mandatory for isolation]
           # Routes all scan results strictly into your isolated secgit project
-          JF_PROJECT: "apoorvad-secgit"
+          JF_PROJECT: "apoorvad-frogbot-maven1"
 
           # [Optional]
           # Xray Watches configured inside the secgit project
